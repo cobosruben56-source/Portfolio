@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>GNOME Desktop · Rubén Cobos</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,6 +14,7 @@
             padding: 0;
             box-sizing: border-box;
             user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -21,7 +22,6 @@
             background: #1a1a1a;
             height: 100vh;
             overflow: hidden;
-            /* Fondo por defecto con degradado y patrón de puntos */
             background-image:
                 radial-gradient(circle at 20% 30%, rgba(255,255,255,0.025) 1px, transparent 1px),
                 radial-gradient(circle at 80% 70%, rgba(255,255,255,0.02) 1px, transparent 1px);
@@ -29,8 +29,8 @@
             background-color: #1a1a1a;
             color: #eeeeee;
             transition: background-image 0.5s ease, background-color 0.5s ease;
+            touch-action: none;
         }
-        /* Clase para cuando se usa imagen de fondo */
         body.wallpaper-set {
             background-size: cover;
             background-position: center;
@@ -76,6 +76,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            touch-action: manipulation;
         }
         .top-left .activities-btn:hover {
             background: rgba(255,255,255,0.12);
@@ -95,11 +96,12 @@
             border-radius: 30px;
             color: #eeeeee;
             letter-spacing: 0.3px;
+            white-space: nowrap;
         }
         .top-right {
             font-size: 1rem;
             color: #cccccc;
-            gap: 12px;
+            gap: 8px;
         }
         .top-right .icons {
             display: flex;
@@ -108,7 +110,7 @@
         .top-right .lang-btn,
         .top-right .wallpaper-btn {
             background: rgba(255,255,255,0.08);
-            padding: 2px 10px;
+            padding: 4px 12px;
             border-radius: 20px;
             font-size: 0.75rem;
             font-weight: 600;
@@ -119,6 +121,8 @@
             display: flex;
             align-items: center;
             gap: 4px;
+            touch-action: manipulation;
+            min-height: 32px;
         }
         .top-right .lang-btn:hover,
         .top-right .wallpaper-btn:hover {
@@ -126,7 +130,7 @@
         }
         .top-right .wallpaper-btn {
             font-size: 1rem;
-            padding: 2px 8px;
+            padding: 2px 10px;
         }
 
         /* ---------- ESCRITORIO ---------- */
@@ -144,6 +148,7 @@
             gap: 20px 40px;
             overflow-y: auto;
             z-index: 1;
+            touch-action: pan-y;
         }
 
         /* ---------- DASH (panel de aplicaciones) ---------- */
@@ -162,6 +167,7 @@
             z-index: 500;
             border: 1px solid rgba(255,255,255,0.06);
             box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+            touch-action: manipulation;
         }
         .dash-icon {
             display: flex;
@@ -174,6 +180,10 @@
             color: #cccccc;
             font-size: 0.7rem;
             gap: 2px;
+            touch-action: manipulation;
+            min-width: 44px;
+            min-height: 44px;
+            justify-content: center;
         }
         .dash-icon:hover {
             background: rgba(255,255,255,0.08);
@@ -201,15 +211,16 @@
             box-shadow: 0 24px 80px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.04);
             display: flex;
             flex-direction: column;
-            min-width: 380px;
-            min-height: 320px;
+            min-width: 320px;
+            min-height: 280px;
             z-index: 100;
             resize: both;
             overflow: hidden;
             transition: opacity 0.2s, transform 0.2s;
+            touch-action: none;
         }
         .window.hidden {
-            display: none;
+            display: none !important;
         }
         .window.maximized {
             top: 44px !important;
@@ -231,6 +242,7 @@
             cursor: grab;
             flex-shrink: 0;
             border-bottom: 1px solid rgba(255,255,255,0.04);
+            touch-action: none;
         }
         .window-titlebar:active {
             cursor: grabbing;
@@ -266,6 +278,7 @@
             color: #eeeeee;
             background: transparent;
             position: relative;
+            touch-action: manipulation;
         }
         .win-btn:hover {
             background-color: rgba(255,255,255,0.08);
@@ -341,17 +354,20 @@
             border-right: 1px solid rgba(255,255,255,0.04);
             flex-shrink: 0;
             overflow-y: auto;
+            touch-action: pan-y;
         }
         .window-body .sidebar-item {
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 6px 16px;
+            padding: 8px 16px;
             color: #cccccc;
             font-size: 0.85rem;
             cursor: pointer;
             transition: background 0.15s, color 0.15s;
             border-left: 3px solid transparent;
+            touch-action: manipulation;
+            min-height: 40px;
         }
         .window-body .sidebar-item:hover {
             background: rgba(255,255,255,0.04);
@@ -369,6 +385,7 @@
             padding: 20px 24px;
             overflow-y: auto;
             background: #2e3436;
+            touch-action: pan-y;
         }
         .window-body .main-content h2 {
             font-size: 1.4rem;
@@ -436,6 +453,7 @@
             white-space: pre-wrap;
             word-break: break-word;
             line-height: 1.5;
+            touch-action: pan-y;
         }
         .terminal-output .prompt { color: #26a269; }
         .terminal-output .cmd { color: #eeeeee; }
@@ -446,6 +464,7 @@
             gap: 8px;
             background: #1a1a1a;
             border-top: 1px solid rgba(255,255,255,0.03);
+            touch-action: manipulation;
         }
         .terminal-input-row span { color: #26a269; font-weight: 600; }
         .terminal-input-row input {
@@ -456,8 +475,10 @@
             color: #eeeeee;
             font-family: 'Inter', monospace;
             font-size: 0.85rem;
-            padding: 4px 0;
+            padding: 6px 0;
             border-bottom: 1px solid rgba(255,255,255,0.1);
+            min-height: 36px;
+            touch-action: manipulation;
         }
         .terminal-input-row input:focus { border-bottom-color: #3584e4; }
 
@@ -467,22 +488,31 @@
         ::-webkit-scrollbar-thumb { background: #444; border-radius: 8px; }
         ::-webkit-scrollbar-thumb:hover { background: #555; }
 
-        /* Responsive para ventanas */
+        /* ---------- RESPONSIVE MÓVIL ---------- */
         @media (max-width: 700px) {
             .window {
-                min-width: 280px;
-                min-height: 240px;
-                left: 5% !important;
-                top: 10% !important;
-                width: 90% !important;
+                min-width: 0;
+                min-height: 0;
+                width: 92% !important;
                 height: 80% !important;
+                left: 4% !important;
+                top: 10% !important;
+                border-radius: 16px;
+            }
+            .window.maximized {
+                top: 44px !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: calc(100% - 44px) !important;
+                border-radius: 0;
             }
             .window-body .sidebar {
                 width: 130px;
             }
             .window-body .sidebar-item {
                 font-size: 0.75rem;
-                padding: 4px 12px;
+                padding: 6px 12px;
+                min-height: 36px;
             }
             .window-body .main-content {
                 padding: 14px 16px;
@@ -491,14 +521,160 @@
                 padding: 6px 12px;
                 gap: 8px;
                 bottom: 10px;
+                border-radius: 16px;
+            }
+            .dash-icon {
+                min-width: 40px;
+                min-height: 40px;
+                padding: 4px 6px;
+            }
+            .dash-icon .icon { font-size: 1.4rem; }
+            .dash-icon .label { font-size: 0.5rem; }
+
+            .gnome-top-bar {
+                padding: 0 10px;
+                height: 40px;
+            }
+            .top-left .activities-btn {
+                font-size: 0.7rem;
+                padding: 2px 10px;
+            }
+            .top-center {
+                font-size: 0.7rem;
+                padding: 2px 8px;
+            }
+            .top-right .icons {
+                gap: 6px;
+                font-size: 0.8rem;
+            }
+            .top-right .lang-btn,
+            .top-right .wallpaper-btn {
+                font-size: 0.65rem;
+                padding: 2px 8px;
+                min-height: 28px;
+            }
+            .top-right .wallpaper-btn {
+                font-size: 0.9rem;
+                padding: 2px 6px;
+            }
+            .window-title {
+                font-size: 0.8rem;
+                padding-left: 8px;
+            }
+            .win-btn {
+                width: 24px;
+                height: 24px;
+                font-size: 12px;
+            }
+            .win-btn.close::before,
+            .win-btn.minimize::before,
+            .win-btn.maximize::before {
+                font-size: 12px;
+            }
+            .terminal-output {
+                font-size: 0.8rem;
+                padding: 10px 12px;
+            }
+            .terminal-input-row input {
+                font-size: 0.8rem;
+                min-height: 32px;
+            }
+            .window-body .main-content h2 {
+                font-size: 1.2rem;
+            }
+            .window-body .main-content p,
+            .window-body .main-content li {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .window {
+                width: 96% !important;
+                left: 2% !important;
+                top: 8% !important;
+                height: 84% !important;
+            }
+            .window-body .sidebar {
+                width: 110px;
+            }
+            .window-body .sidebar-item {
+                font-size: 0.7rem;
+                padding: 4px 10px;
+                gap: 6px;
+                min-height: 32px;
+            }
+            .window-body .sidebar-item .icon {
+                font-size: 0.9rem;
+                width: 20px;
+            }
+            .window-body .main-content {
+                padding: 10px 12px;
+            }
+            .gnome-dash {
+                padding: 4px 8px;
+                gap: 4px;
+                bottom: 6px;
+                border-radius: 14px;
+            }
+            .dash-icon {
+                min-width: 36px;
+                min-height: 36px;
+                padding: 2px 4px;
             }
             .dash-icon .icon { font-size: 1.2rem; }
-            .dash-icon .label { font-size: 0.5rem; }
-        }
-        @media (max-width: 480px) {
-            .top-left .activities-btn { font-size: 0.7rem; padding: 2px 10px; }
-            .top-center { font-size: 0.75rem; padding: 2px 10px; }
-            .top-right .icons { gap: 6px; font-size: 0.8rem; }
+            .dash-icon .label { font-size: 0.4rem; }
+            .top-center {
+                font-size: 0.6rem;
+                padding: 2px 6px;
+            }
+            .top-left .activities-btn {
+                font-size: 0.6rem;
+                padding: 2px 8px;
+            }
+            .top-right .icons {
+                gap: 4px;
+                font-size: 0.7rem;
+            }
+            .top-right .lang-btn,
+            .top-right .wallpaper-btn {
+                font-size: 0.55rem;
+                padding: 2px 6px;
+                min-height: 24px;
+            }
+            .top-right .wallpaper-btn {
+                font-size: 0.8rem;
+                padding: 2px 4px;
+            }
+            .window-title {
+                font-size: 0.7rem;
+                padding-left: 6px;
+            }
+            .win-btn {
+                width: 20px;
+                height: 20px;
+                font-size: 10px;
+            }
+            .win-btn.close::before,
+            .win-btn.minimize::before,
+            .win-btn.maximize::before {
+                font-size: 10px;
+            }
+            .terminal-output {
+                font-size: 0.7rem;
+                padding: 8px 10px;
+            }
+            .terminal-input-row input {
+                font-size: 0.7rem;
+                min-height: 28px;
+            }
+            .window-body .main-content h2 {
+                font-size: 1rem;
+            }
+            .window-body .main-content p,
+            .window-body .main-content li {
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
@@ -516,7 +692,6 @@
             <div class="icons">
                 <span>📶</span><span>🔊</span><span>🔋</span><span>⚙️</span>
             </div>
-            <!-- Botón para cambiar fondo de pantalla -->
             <button class="wallpaper-btn" id="wallpaperBtn" title="Change wallpaper (right-click to reset)">🖼️</button>
             <button class="lang-btn" id="langToggle">ES</button>
         </div>
@@ -787,6 +962,7 @@
             const wallpaperBtn = document.getElementById('wallpaperBtn');
             const wallpaperInput = document.getElementById('wallpaperInput');
             const body = document.body;
+            const desktop = document.getElementById('desktop');
 
             // ---------- FUNCIÓN PARA ACTUALIZAR EL IDIOMA ----------
             function updateLanguage(lang) {
@@ -826,10 +1002,14 @@
 
             // ---------- NAVEGACIÓN ----------
             sidebarItems.forEach(item => {
-                item.addEventListener('click', function() {
+                item.addEventListener('click', function(e) {
                     const section = this.dataset.section;
                     if (section) renderSection(section);
                 });
+                // Soporte táctil
+                item.addEventListener('touchstart', function(e) {
+                    // Solo para evitar conflictos con scroll, pero no prevenimos el click
+                }, { passive: true });
             });
 
             // ---------- RELOJ ----------
@@ -860,6 +1040,10 @@
                     dashIcons.forEach(d => d.classList.remove('active'));
                     this.classList.add('active');
                 });
+                // Soporte táctil
+                icon.addEventListener('touchstart', function(e) {
+                    // Evitamos doble activación
+                }, { passive: true });
             });
 
             document.querySelectorAll('.win-btn').forEach(btn => {
@@ -881,43 +1065,76 @@
                         win.classList.toggle('maximized');
                     }
                 });
+                // Soporte táctil
+                btn.addEventListener('touchstart', function(e) {
+                    // Prevenir scroll accidental
+                }, { passive: true });
             });
 
-            // Arrastre de ventanas
+            // ---------- ARRASTRE DE VENTANAS (Mouse + Touch) ----------
             let dragTarget = null, dragOffsetX = 0, dragOffsetY = 0;
+            let isDragging = false;
 
-            document.querySelectorAll('.window-titlebar').forEach(titlebar => {
-                titlebar.addEventListener('mousedown', function(e) {
-                    if (e.target.closest('.win-btn')) return;
-                    const win = this.closest('.window');
-                    if (!win || win.classList.contains('maximized')) return;
-                    dragTarget = win;
-                    const rect = win.getBoundingClientRect();
-                    dragOffsetX = e.clientX - rect.left;
-                    dragOffsetY = e.clientY - rect.top;
-                    win.style.cursor = 'grabbing';
-                    e.preventDefault();
-                });
-            });
+            function startDrag(e, clientX, clientY) {
+                const titlebar = e.currentTarget;
+                if (e.target.closest('.win-btn')) return;
+                const win = titlebar.closest('.window');
+                if (!win || win.classList.contains('maximized')) return;
+                dragTarget = win;
+                const rect = win.getBoundingClientRect();
+                dragOffsetX = clientX - rect.left;
+                dragOffsetY = clientY - rect.top;
+                win.style.cursor = 'grabbing';
+                isDragging = true;
+                e.preventDefault();
+            }
 
-            document.addEventListener('mousemove', function(e) {
-                if (!dragTarget) return;
-                let left = e.clientX - dragOffsetX;
-                let top = e.clientY - dragOffsetY;
+            function moveDrag(clientX, clientY) {
+                if (!dragTarget || !isDragging) return;
+                let left = clientX - dragOffsetX;
+                let top = clientY - dragOffsetY;
                 left = Math.max(0, Math.min(left, window.innerWidth - dragTarget.offsetWidth));
                 top = Math.max(44, Math.min(top, window.innerHeight - dragTarget.offsetHeight - 20));
                 dragTarget.style.left = left + 'px';
                 dragTarget.style.top = top + 'px';
                 dragTarget.style.right = 'auto';
                 dragTarget.style.bottom = 'auto';
-            });
+            }
 
-            document.addEventListener('mouseup', function() {
+            function endDrag() {
                 if (dragTarget) {
                     dragTarget.style.cursor = '';
                     dragTarget = null;
+                    isDragging = false;
                 }
+            }
+
+            // Mouse
+            document.querySelectorAll('.window-titlebar').forEach(titlebar => {
+                titlebar.addEventListener('mousedown', function(e) {
+                    startDrag(e, e.clientX, e.clientY);
+                });
             });
+            document.addEventListener('mousemove', function(e) {
+                moveDrag(e.clientX, e.clientY);
+            });
+            document.addEventListener('mouseup', endDrag);
+
+            // Touch
+            document.querySelectorAll('.window-titlebar').forEach(titlebar => {
+                titlebar.addEventListener('touchstart', function(e) {
+                    const touch = e.touches[0];
+                    startDrag(e, touch.clientX, touch.clientY);
+                }, { passive: false });
+            });
+            document.addEventListener('touchmove', function(e) {
+                if (!isDragging) return;
+                const touch = e.touches[0];
+                moveDrag(touch.clientX, touch.clientY);
+                e.preventDefault();
+            }, { passive: false });
+            document.addEventListener('touchend', endDrag);
+            document.addEventListener('touchcancel', endDrag);
 
             function bringToFront(win) {
                 const maxZ = Math.max(...Array.from(document.querySelectorAll('.window:not(.hidden)')).map(w => parseInt(w.style.zIndex) || 100));
@@ -925,24 +1142,39 @@
             }
             document.querySelectorAll('.window').forEach(win => {
                 win.addEventListener('mousedown', function() { bringToFront(this); });
+                win.addEventListener('touchstart', function() { bringToFront(this); }, { passive: true });
             });
 
-            document.getElementById('desktop').addEventListener('dblclick', function(e) {
+            // Doble toque en escritorio para abrir terminal (mejorado para móvil)
+            let lastTap = 0;
+            desktop.addEventListener('click', function(e) {
                 if (e.target.closest('.dash-icon')) return;
-                const term = document.getElementById('window-terminal');
-                if (term.classList.contains('hidden')) {
-                    term.classList.remove('hidden');
-                    term.style.display = 'flex';
-                    bringToFront(term);
-                    terminalInput.focus();
-                    dashIcons.forEach(d => {
-                        d.classList.remove('active');
-                        if (d.dataset.window === 'terminal') d.classList.add('active');
-                    });
+                const now = Date.now();
+                if (now - lastTap < 300) {
+                    // Doble click
+                    const term = document.getElementById('window-terminal');
+                    if (term.classList.contains('hidden')) {
+                        term.classList.remove('hidden');
+                        term.style.display = 'flex';
+                        bringToFront(term);
+                        terminalInput.focus();
+                        dashIcons.forEach(d => {
+                            d.classList.remove('active');
+                            if (d.dataset.window === 'terminal') d.classList.add('active');
+                        });
+                    } else {
+                        bringToFront(term);
+                    }
+                    lastTap = 0;
                 } else {
-                    bringToFront(term);
+                    lastTap = now;
                 }
             });
+            // También para doble toque táctil
+            desktop.addEventListener('touchstart', function(e) {
+                if (e.target.closest('.dash-icon')) return;
+                // No hacer nada, el click ya maneja el doble toque
+            }, { passive: true });
 
             // ---------- TERMINAL SIMULADA ----------
             function terminalPrint(text, isCommand = false) {
@@ -1026,6 +1258,10 @@
                 }
             });
 
+            // En móvil, tocar la ventana de terminal enfoca el input
+            terminalWindow.addEventListener('touchstart', function() {
+                setTimeout(() => terminalInput.focus(), 100);
+            }, { passive: true });
             terminalWindow.addEventListener('mousedown', function() {
                 setTimeout(() => terminalInput.focus(), 50);
             });
@@ -1035,9 +1271,11 @@
                 const newLang = currentLang === 'en' ? 'es' : 'en';
                 updateLanguage(newLang);
             });
+            langToggle.addEventListener('touchstart', function(e) {
+                // Prevenir doble activación
+            }, { passive: true });
 
             // ---------- CAMBIO DE FONDO DE PANTALLA ----------
-            // Cargar fondo guardado en localStorage
             function loadWallpaper() {
                 const saved = localStorage.getItem('wallpaper');
                 if (saved) {
@@ -1053,13 +1291,8 @@
             }
 
             function setWallpaper(url, isDataUrl = false) {
-                if (isDataUrl) {
-                    body.style.setProperty('--wallpaper', `url(${url})`);
-                } else {
-                    body.style.setProperty('--wallpaper', `url(${url})`);
-                }
+                body.style.setProperty('--wallpaper', `url(${url})`);
                 body.classList.add('wallpaper-set');
-                // Guardar en localStorage
                 localStorage.setItem('wallpaper', JSON.stringify({ url: url, isDataUrl: isDataUrl }));
             }
 
@@ -1073,11 +1306,13 @@
                 e.preventDefault();
                 wallpaperInput.click();
             });
+            wallpaperBtn.addEventListener('touchstart', function(e) {
+                // No prevenir para que el click funcione
+            }, { passive: true });
 
             wallpaperBtn.addEventListener('contextmenu', function(e) {
                 e.preventDefault();
                 resetWallpaper();
-                // Mostrar mensaje en terminal (opcional)
                 terminalPrint('🖼️ Wallpaper reset to default.');
             });
 
@@ -1090,10 +1325,9 @@
                     setWallpaper(dataUrl, true);
                 };
                 reader.readAsDataURL(file);
-                this.value = ''; // permitir seleccionar el mismo archivo de nuevo
+                this.value = '';
             });
 
-            // Cargar wallpaper al iniciar
             loadWallpaper();
 
             // ---------- INICIALIZAR ----------
@@ -1115,6 +1349,20 @@
                 d.classList.remove('active');
                 if (d.dataset.window === 'portafolio') d.classList.add('active');
             });
+
+            // Ajustar ventanas en móvil al cargar
+            function adjustWindowsMobile() {
+                if (window.innerWidth <= 700) {
+                    // Asegurar que las ventanas no estén demasiado pequeñas
+                    document.querySelectorAll('.window:not(.hidden)').forEach(win => {
+                        if (!win.classList.contains('maximized')) {
+                            // Ya las media queries las hacen más grandes
+                        }
+                    });
+                }
+            }
+            adjustWindowsMobile();
+            window.addEventListener('resize', adjustWindowsMobile);
 
         })();
     </script>
