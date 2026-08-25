@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
     <style>
-        /* ---------- RESET Y BASE ---------- */
         * {
             margin: 0;
             padding: 0;
@@ -38,7 +37,6 @@
             background-image: var(--wallpaper, none) !important;
         }
 
-        /* ---------- BARRA SUPERIOR (GNOME Shell) ---------- */
         .gnome-top-bar {
             position: fixed;
             top: 0;
@@ -133,7 +131,6 @@
             padding: 2px 10px;
         }
 
-        /* ---------- ESCRITORIO ---------- */
         .desktop {
             position: fixed;
             top: 44px;
@@ -151,7 +148,6 @@
             touch-action: pan-y;
         }
 
-        /* ---------- DASH (panel de aplicaciones) ---------- */
         .gnome-dash {
             position: fixed;
             bottom: 20px;
@@ -203,7 +199,6 @@
             color: #3584e4;
         }
 
-        /* ---------- VENTANAS (estilo Adwaita) ---------- */
         .window {
             position: fixed;
             background: #2e3436;
@@ -231,7 +226,6 @@
             resize: none;
         }
 
-        /* Barra de título (HeaderBar) */
         .window-titlebar {
             background: #2e3436;
             padding: 0 8px;
@@ -315,7 +309,6 @@
             opacity: 1;
         }
 
-        /* Contenido de la ventana */
         .window-body {
             flex: 1;
             display: flex;
@@ -439,7 +432,6 @@
             text-decoration: none;
         }
 
-        /* Terminal específica */
         .terminal-window .window-body {
             background: #1a1a1a;
         }
@@ -482,13 +474,11 @@
         }
         .terminal-input-row input:focus { border-bottom-color: #3584e4; }
 
-        /* Scrollbar oscura */
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: #1a1a1a; }
         ::-webkit-scrollbar-thumb { background: #444; border-radius: 8px; }
         ::-webkit-scrollbar-thumb:hover { background: #555; }
 
-        /* ---------- RESPONSIVE MÓVIL ---------- */
         @media (max-width: 700px) {
             .window {
                 min-width: 0;
@@ -680,7 +670,6 @@
 </head>
 <body>
 
-    <!-- BARRA SUPERIOR GNOME -->
     <header class="gnome-top-bar">
         <div class="top-left">
             <span class="activities-btn">
@@ -697,10 +686,8 @@
         </div>
     </header>
 
-    <!-- ESCRITORIO -->
     <div class="desktop" id="desktop"></div>
 
-    <!-- DASH -->
     <div class="gnome-dash" id="dash">
         <div class="dash-icon active" data-window="portafolio">
             <span class="icon">📁</span>
@@ -716,7 +703,6 @@
         </div>
     </div>
 
-    <!-- VENTANA PORTAFOLIO -->
     <div id="window-portafolio" class="window" style="width: 780px; height: 560px; top: 70px; left: 60px;">
         <div class="window-titlebar" data-window="portafolio">
             <span class="window-title" data-i18n="window-portfolio-title">Portfolio of Rubén</span>
@@ -744,7 +730,6 @@
         </div>
     </div>
 
-    <!-- VENTANA TERMINAL -->
     <div id="window-terminal" class="window terminal-window hidden" style="width: 520px; height: 340px; top: 130px; left: 280px; display: none;">
         <div class="window-titlebar" data-window="terminal">
             <span class="window-title" data-i18n="window-terminal-title">Terminal · Rubén</span>
@@ -765,14 +750,12 @@
         </div>
     </div>
 
-    <!-- Input oculto para seleccionar imagen de fondo -->
     <input type="file" id="wallpaperInput" accept="image/*" style="display:none;">
 
     <script>
         (function() {
             'use strict';
 
-            // ---------- CONTENIDO MULTI-IDIOMA ----------
             const content = {
                 en: {
                     'nav-home': 'Home',
@@ -945,11 +928,9 @@
                 }
             };
 
-            // ---------- ESTADO ----------
             let currentLang = 'en';
             let currentSection = 'inicio';
 
-            // ---------- REFERENCIAS ----------
             const portafolioWindow = document.getElementById('window-portafolio');
             const terminalWindow = document.getElementById('window-terminal');
             const sidebarItems = document.querySelectorAll('#sidebar-portafolio .sidebar-item');
@@ -964,7 +945,6 @@
             const body = document.body;
             const desktop = document.getElementById('desktop');
 
-            // ---------- FUNCIÓN PARA ACTUALIZAR EL IDIOMA ----------
             function updateLanguage(lang) {
                 currentLang = lang;
                 document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -988,7 +968,6 @@
                 document.querySelector('.window-title[data-window="terminal"]').textContent = content[lang]['window-terminal-title'] || 'Terminal · Rubén';
             }
 
-            // ---------- RENDERIZAR SECCIÓN ----------
             function renderSection(sectionId) {
                 currentSection = sectionId;
                 const key = 'section-' + sectionId;
@@ -1000,18 +979,15 @@
                 });
             }
 
-            // ---------- NAVEGACIÓN ----------
             sidebarItems.forEach(item => {
                 item.addEventListener('click', function(e) {
                     const section = this.dataset.section;
                     if (section) renderSection(section);
                 });
                 item.addEventListener('touchstart', function(e) {
-                    // Pasivo para evitar conflictos con scroll
                 }, { passive: true });
             });
 
-            // ---------- RELOJ CON ZONA HORARIA DE ECUADOR ----------
             function updateClock() {
                 const now = new Date();
                 const opts = {
@@ -1024,18 +1000,15 @@
                     second: '2-digit',
                     hour12: false,
                     timeZone: 'America/Guayaquil',
-                    timeZoneName: 'short'  // Muestra "GMT-5" para Ecuador
+                    timeZoneName: 'short'  
                 };
-                // Usamos el idioma del usuario para el formato, pero siempre mostramos la zona horaria de Ecuador
                 const locale = currentLang === 'en' ? 'en-US' : 'es-ES';
                 const formatted = new Intl.DateTimeFormat(locale, opts).format(now);
-                // Reemplazamos "GMT-5" por "ECT" o "UTC-5" si prefieres, pero lo dejamos como viene
                 document.getElementById('clockDisplay').textContent = formatted;
             }
             updateClock();
             setInterval(updateClock, 1000);
 
-            // ---------- MANEJO DE VENTANAS ----------
             const windows = document.querySelectorAll('.window');
 
             dashIcons.forEach(icon => {
@@ -1043,7 +1016,6 @@
                     const winId = this.dataset.window;
                     let win = document.getElementById('window-' + winId);
                     
-                    // Si la ventana no existe y es "contacto", abrimos portfolio y vamos a contacto
                     if (!win && winId === 'contacto') {
                         const pWin = document.getElementById('window-portafolio');
                         if (pWin.classList.contains('hidden')) {
@@ -1072,7 +1044,6 @@
                     this.classList.add('active');
                 });
                 icon.addEventListener('touchstart', function(e) {
-                    // Pasivo
                 }, { passive: true });
             });
 
@@ -1096,11 +1067,9 @@
                     }
                 });
                 btn.addEventListener('touchstart', function(e) {
-                    // Pasivo
                 }, { passive: true });
             });
 
-            // ---------- ARRASTRE DE VENTANAS (Mouse + Touch) ----------
             let dragTarget = null, dragOffsetX = 0, dragOffsetY = 0;
             let isDragging = false;
 
@@ -1138,7 +1107,6 @@
                 }
             }
 
-            // Mouse
             document.querySelectorAll('.window-titlebar').forEach(titlebar => {
                 titlebar.addEventListener('mousedown', function(e) {
                     startDrag(e, e.clientX, e.clientY);
@@ -1149,7 +1117,6 @@
             });
             document.addEventListener('mouseup', endDrag);
 
-            // Touch
             document.querySelectorAll('.window-titlebar').forEach(titlebar => {
                 titlebar.addEventListener('touchstart', function(e) {
                     const touch = e.touches[0];
@@ -1174,7 +1141,6 @@
                 win.addEventListener('touchstart', function() { bringToFront(this); }, { passive: true });
             });
 
-            // Doble toque en escritorio para abrir terminal
             let lastTap = 0;
             desktop.addEventListener('click', function(e) {
                 if (e.target.closest('.dash-icon')) return;
@@ -1202,7 +1168,6 @@
                 if (e.target.closest('.dash-icon')) return;
             }, { passive: true });
 
-            // ---------- TERMINAL SIMULADA ----------
             function terminalPrint(text, isCommand = false) {
                 const line = document.createElement('div');
                 if (isCommand) {
@@ -1291,16 +1256,13 @@
                 setTimeout(() => terminalInput.focus(), 50);
             });
 
-            // ---------- CAMBIO DE IDIOMA ----------
             langToggle.addEventListener('click', function() {
                 const newLang = currentLang === 'en' ? 'es' : 'en';
                 updateLanguage(newLang);
             });
             langToggle.addEventListener('touchstart', function(e) {
-                // Pasivo
             }, { passive: true });
 
-            // ---------- CAMBIO DE FONDO DE PANTALLA ----------
             function loadWallpaper() {
                 const saved = localStorage.getItem('wallpaper');
                 if (saved) {
@@ -1310,7 +1272,7 @@
                             setWallpaper(data.url, data.isDataUrl);
                             return;
                         }
-                    } catch (e) { /* ignorar */ }
+                    } catch (e) { /**/ }
                 }
                 const defaultWallpaper = 'https://raw.githubusercontent.com/cobosruben56-source/Portfolio/main/images/Fondo.jpg';
                 setWallpaper(defaultWallpaper, false);
@@ -1336,7 +1298,6 @@
                 wallpaperInput.click();
             });
             wallpaperBtn.addEventListener('touchstart', function(e) {
-                // Pasivo
             }, { passive: true });
 
             wallpaperBtn.addEventListener('contextmenu', function(e) {
@@ -1358,7 +1319,6 @@
 
             loadWallpaper();
 
-            // ---------- INICIALIZAR ----------
             portafolioWindow.classList.remove('hidden');
             portafolioWindow.style.display = 'flex';
             terminalWindow.classList.add('hidden');
@@ -1380,7 +1340,6 @@
 
             function adjustWindowsMobile() {
                 if (window.innerWidth <= 700) {
-                    // Las media queries ya manejan el tamaño
                 }
             }
             adjustWindowsMobile();
