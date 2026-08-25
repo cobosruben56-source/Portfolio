@@ -1269,19 +1269,21 @@
             }, { passive: true });
 
             // ---------- CAMBIO DE FONDO DE PANTALLA ----------
-            function loadWallpaper() {
-                const saved = localStorage.getItem('wallpaper');
-                if (saved) {
-                    try {
-                        const data = JSON.parse(saved);
-                        if (data.url) {
-                            setWallpaper(data.url, data.isDataUrl);
-                        }
-                    } catch (e) {
-                        // ignore
-                    }
-                }
+function loadWallpaper() {
+    const saved = localStorage.getItem('wallpaper');
+    if (saved) {
+        try {
+            const data = JSON.parse(saved);
+            if (data.url) {
+                setWallpaper(data.url, data.isDataUrl);
+                return;
             }
+        } catch (e) { /* ignorar */ }
+    }
+   
+    const defaultWallpaper = 'https://raw.githubusercontent.com/tu-usuario/tu-repo/main/imagenes/Fondo.jpg'; // <--- AQUÍ
+    setWallpaper(defaultWallpaper, false);
+}
 
             function setWallpaper(url, isDataUrl = false) {
                 body.style.setProperty('--wallpaper', `url(${url})`);
