@@ -1011,11 +1011,26 @@
                 }, { passive: true });
             });
 
-            // ---------- RELOJ ----------
+            // ---------- RELOJ CON ZONA HORARIA DE ECUADOR ----------
             function updateClock() {
                 const now = new Date();
-                const opts = { weekday:'short', day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false };
-                document.getElementById('clockDisplay').textContent = new Intl.DateTimeFormat(currentLang === 'en' ? 'en-US' : 'es-ES', opts).format(now);
+                const opts = {
+                    weekday: 'short',
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false,
+                    timeZone: 'America/Guayaquil',
+                    timeZoneName: 'short'  // Muestra "GMT-5" para Ecuador
+                };
+                // Usamos el idioma del usuario para el formato, pero siempre mostramos la zona horaria de Ecuador
+                const locale = currentLang === 'en' ? 'en-US' : 'es-ES';
+                const formatted = new Intl.DateTimeFormat(locale, opts).format(now);
+                // Reemplazamos "GMT-5" por "ECT" o "UTC-5" si prefieres, pero lo dejamos como viene
+                document.getElementById('clockDisplay').textContent = formatted;
             }
             updateClock();
             setInterval(updateClock, 1000);
@@ -1026,7 +1041,24 @@
             dashIcons.forEach(icon => {
                 icon.addEventListener('click', function(e) {
                     const winId = this.dataset.window;
-                    const win = document.getElementById('window-' + winId);
+                    let win = document.getElementById('window-' + winId);
+                    
+                    // Si la ventana no existe y es "contacto", abrimos portfolio y vamos a contacto
+                    if (!win && winId === 'contacto') {
+                        const pWin = document.getElementById('window-portafolio');
+                        if (pWin.classList.contains('hidden')) {
+                            pWin.classList.remove('hidden');
+                            pWin.style.display = 'flex';
+                            bringToFront(pWin);
+                        } else {
+                            bringToFront(pWin);
+                        }
+                        renderSection('contacto');
+                        dashIcons.forEach(d => d.classList.remove('active'));
+                        this.classList.add('active');
+                        return;
+                    }
+
                     if (win) {
                         if (win.classList.contains('hidden')) {
                             win.classList.remove('hidden');
@@ -1142,7 +1174,7 @@
                 win.addEventListener('touchstart', function() { bringToFront(this); }, { passive: true });
             });
 
-            // Doble toque en escritorio para abrir terminal (mejorado para móvil)
+            // Doble toque en escritorio para abrir terminal
             let lastTap = 0;
             desktop.addEventListener('click', function(e) {
                 if (e.target.closest('.dash-icon')) return;
@@ -1275,14 +1307,11 @@
                     try {
                         const data = JSON.parse(saved);
                         if (data.url) {
-                            // Intentamos cargar el guardado, pero si falla, usamos el default
                             setWallpaper(data.url, data.isDataUrl);
-                            // Verificamos que realmente se cargue (opcional)
                             return;
                         }
                     } catch (e) { /* ignorar */ }
                 }
-                // Si no hay guardado o es inválido, usamos el default
                 const defaultWallpaper = 'https://raw.githubusercontent.com/cobosruben56-source/Portfolio/main/images/Fondo.jpg';
                 setWallpaper(defaultWallpaper, false);
             }
@@ -1291,17 +1320,15 @@
                 body.style.setProperty('--wallpaper', `url(${url})`);
                 body.classList.add('wallpaper-set');
                 localStorage.setItem('wallpaper', JSON.stringify({ url: url, isDataUrl: isDataUrl }));
-                console.log('Wallpaper establecido:', url); // Para depuración
             }
 
             function resetWallpaper() {
                 body.classList.remove('wallpaper-set');
                 body.style.setProperty('--wallpaper', 'none');
                 localStorage.removeItem('wallpaper');
-                terminalPrint('🖼️ Wallpaper reset to default.');
-                // Recargamos el default
                 const defaultWallpaper = 'https://raw.githubusercontent.com/cobosruben56-source/Portfolio/main/images/Fondo.jpg';
                 setWallpaper(defaultWallpaper, false);
+                terminalPrint('🖼️ Wallpaper reset to default.');
             }
 
             wallpaperBtn.addEventListener('click', function(e) {
