@@ -772,7 +772,7 @@
         (function() {
             'use strict';
 
-            // ---------- CONTENIDO MULTI-IDIOMA ----------
+            // ---------- CONTENIDO MULTI-IDIOMA (ACTUALIZADO: MySQL y PostgreSQL) ----------
             const content = {
                 en: {
                     'nav-home': 'Home',
@@ -825,7 +825,7 @@
                             <li><strong>C#</strong> · .NET 8 · LINQ · Async/Await</li>
                             <li><strong>XAML</strong> · Avalonia UI · WPF (knowledge)</li>
                             <li><strong>MVVM</strong> · Prism · ReactiveUI</li>
-                            <li><strong>Databases</strong> SQLite · PostgreSQL · EF Core</li>
+                            <li><strong>Databases</strong> MySQL · PostgreSQL · EF Core</li>
                             <li><strong>Git</strong> · GitHub · GitLab</li>
                             <li><strong>Clean Architecture</strong> · DDD · CQRS (basic)</li>
                             <li><strong>Testing</strong> xUnit · NUnit · Moq</li>
@@ -909,7 +909,7 @@
                             <li><strong>C#</strong> · .NET 8 · LINQ · Async/Await</li>
                             <li><strong>XAML</strong> · Avalonia UI · WPF (conocimiento)</li>
                             <li><strong>MVVM</strong> · Prism · ReactiveUI</li>
-                            <li><strong>Bases de datos</strong> SQLite · PostgreSQL · EF Core</li>
+                            <li><strong>Bases de datos</strong> MySQL · PostgreSQL · EF Core</li>
                             <li><strong>Git</strong> · GitHub · GitLab</li>
                             <li><strong>Clean Architecture</strong> · DDD · CQRS (básico)</li>
                             <li><strong>Pruebas</strong> xUnit · NUnit · Moq</li>
@@ -1006,9 +1006,8 @@
                     const section = this.dataset.section;
                     if (section) renderSection(section);
                 });
-                // Soporte táctil
                 item.addEventListener('touchstart', function(e) {
-                    // Solo para evitar conflictos con scroll, pero no prevenimos el click
+                    // Pasivo para evitar conflictos con scroll
                 }, { passive: true });
             });
 
@@ -1040,9 +1039,8 @@
                     dashIcons.forEach(d => d.classList.remove('active'));
                     this.classList.add('active');
                 });
-                // Soporte táctil
                 icon.addEventListener('touchstart', function(e) {
-                    // Evitamos doble activación
+                    // Pasivo
                 }, { passive: true });
             });
 
@@ -1065,9 +1063,8 @@
                         win.classList.toggle('maximized');
                     }
                 });
-                // Soporte táctil
                 btn.addEventListener('touchstart', function(e) {
-                    // Prevenir scroll accidental
+                    // Pasivo
                 }, { passive: true });
             });
 
@@ -1151,7 +1148,6 @@
                 if (e.target.closest('.dash-icon')) return;
                 const now = Date.now();
                 if (now - lastTap < 300) {
-                    // Doble click
                     const term = document.getElementById('window-terminal');
                     if (term.classList.contains('hidden')) {
                         term.classList.remove('hidden');
@@ -1170,10 +1166,8 @@
                     lastTap = now;
                 }
             });
-            // También para doble toque táctil
             desktop.addEventListener('touchstart', function(e) {
                 if (e.target.closest('.dash-icon')) return;
-                // No hacer nada, el click ya maneja el doble toque
             }, { passive: true });
 
             // ---------- TERMINAL SIMULADA ----------
@@ -1258,7 +1252,6 @@
                 }
             });
 
-            // En móvil, tocar la ventana de terminal enfoca el input
             terminalWindow.addEventListener('touchstart', function() {
                 setTimeout(() => terminalInput.focus(), 100);
             }, { passive: true });
@@ -1272,7 +1265,7 @@
                 updateLanguage(newLang);
             });
             langToggle.addEventListener('touchstart', function(e) {
-                // Prevenir doble activación
+                // Pasivo
             }, { passive: true });
 
             // ---------- CAMBIO DE FONDO DE PANTALLA ----------
@@ -1307,7 +1300,7 @@
                 wallpaperInput.click();
             });
             wallpaperBtn.addEventListener('touchstart', function(e) {
-                // No prevenir para que el click funcione
+                // Pasivo
             }, { passive: true });
 
             wallpaperBtn.addEventListener('contextmenu', function(e) {
@@ -1350,15 +1343,9 @@
                 if (d.dataset.window === 'portafolio') d.classList.add('active');
             });
 
-            // Ajustar ventanas en móvil al cargar
             function adjustWindowsMobile() {
                 if (window.innerWidth <= 700) {
-                    // Asegurar que las ventanas no estén demasiado pequeñas
-                    document.querySelectorAll('.window:not(.hidden)').forEach(win => {
-                        if (!win.classList.contains('maximized')) {
-                            // Ya las media queries las hacen más grandes
-                        }
-                    });
+                    // Las media queries ya manejan el tamaño
                 }
             }
             adjustWindowsMobile();
