@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GNOME Desktop · Rubén Cobos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
+    <style>
+        /* ---------- RESET Y BASE ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Inter', 'Cantarell', sans-serif;
+            background: #1a1a1a;
+            height: 100vh;
+            overflow: hidden;
+            /* Fondo por defecto con degradado y patrón de puntos */
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(255,255,255,0.025) 1px, transparent 1px),
+                radial-gradient(circle at 80% 70%, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 30px 30px, 40px 40px;
+            background-color: #1a1a1a;
+            color: #eeeeee;
+            transition: background-image 0.5s ease, background-color 0.5s ease;
+        }
+        /* Clase para cuando se usa imagen de fondo */
+        body.wallpaper-set {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-image: var(--wallpaper, none) !important;
+        }
+
+        /* ---------- BARRA SUPERIOR (GNOME Shell) ---------- */
+        .gnome-top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 44px;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .top-left, .top-center, .top-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .top-left {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #eeeeee;
+        }
+        .top-left .activities-btn {
+            background: rgba(255,255,255,0.06);
+            padding: 4px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-weight: 500;
+            color: #eeeeee;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .top-left .activities-btn:hover {
+            background: rgba(255,255,255,0.12);
+        }
+        .top-left .activities-btn .dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #3584e4;
+            border-radius: 50%;
+            margin-right: 4px;
+        }
+        .top-center {
+            font-size: 0.9rem;
+            background: rgba(255,255,255,0.04);
+            padding: 4px 16px;
+            border-radius: 30px;
+            color: #eeeeee;
+            letter-spacing: 0.3px;
+        }
+        .top-right {
+            font-size: 1rem;
+            color: #cccccc;
+            gap: 12px;
+        }
+        .top-right .icons {
+            display: flex;
+            gap: 12px;
+        }
+        .top-right .lang-btn,
+        .top-right .wallpaper-btn {
+            background: rgba(255,255,255,0.08);
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            border: none;
+            color: #eeeeee;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .top-right .lang-btn:hover,
+        .top-right .wallpaper-btn:hover {
+            background: rgba(255,255,255,0.16);
+        }
+        .top-right .wallpaper-btn {
+            font-size: 1rem;
+            padding: 2px 8px;
+        }
+
+        /* ---------- ESCRITORIO ---------- */
+        .desktop {
+            position: fixed;
+            top: 44px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            gap: 20px 40px;
+            overflow-y: auto;
+            z-index: 1;
+        }
+
+        /* ---------- DASH (panel de aplicaciones) ---------- */
+        .gnome-dash {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 20px;
+            padding: 8px 16px;
+            display: flex;
+            gap: 12px;
+            z-index: 500;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+        }
+        .dash-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 6px 8px;
+            border-radius: 12px;
+            transition: background 0.2s, transform 0.15s;
+            color: #cccccc;
+            font-size: 0.7rem;
+            gap: 2px;
+        }
+        .dash-icon:hover {
+            background: rgba(255,255,255,0.08);
+            transform: scale(1.05);
+            color: #ffffff;
+        }
+        .dash-icon .icon {
+            font-size: 1.6rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+        }
+        .dash-icon .label {
+            font-size: 0.6rem;
+            opacity: 0.7;
+        }
+        .dash-icon.active .label {
+            opacity: 1;
+            color: #3584e4;
+        }
+
+        /* ---------- VENTANAS (estilo Adwaita) ---------- */
+        .window {
+            position: fixed;
+            background: #2e3436;
+            border-radius: 12px;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.04);
+            display: flex;
+            flex-direction: column;
+            min-width: 380px;
+            min-height: 320px;
+            z-index: 100;
+            resize: both;
+            overflow: hidden;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+        .window.hidden {
+            display: none;
+        }
+        .window.maximized {
+            top: 44px !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: calc(100% - 44px) !important;
+            border-radius: 0;
+            resize: none;
+        }
+
+        /* Barra de título (HeaderBar) */
+        .window-titlebar {
+            background: #2e3436;
+            padding: 0 8px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: grab;
+            flex-shrink: 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .window-titlebar:active {
+            cursor: grabbing;
+        }
+        .window-title {
+            color: #eeeeee;
+            font-size: 0.9rem;
+            font-weight: 500;
+            opacity: 0.9;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding-left: 12px;
+            flex: 1;
+        }
+        .window-controls {
+            display: flex;
+            gap: 4px;
+            padding-right: 4px;
+            order: 2;
+        }
+        .win-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #eeeeee;
+            background: transparent;
+            position: relative;
+        }
+        .win-btn:hover {
+            background-color: rgba(255,255,255,0.08);
+        }
+        .win-btn.close:hover {
+            background-color: #c01c28;
+            color: white;
+        }
+        .win-btn.minimize:hover {
+            background-color: rgba(255,255,255,0.12);
+        }
+        .win-btn.maximize:hover {
+            background-color: rgba(255,255,255,0.12);
+        }
+        .win-btn.close::before {
+            content: "✕";
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        .win-btn.minimize::before {
+            content: "−";
+            font-size: 18px;
+            opacity: 0.7;
+            line-height: 1;
+        }
+        .win-btn.maximize::before {
+            content: "□";
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        .win-btn.close:hover::before,
+        .win-btn.minimize:hover::before,
+        .win-btn.maximize:hover::before {
+            opacity: 1;
+        }
+
+        /* Contenido de la ventana */
+        .window-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: #2e3436;
+        }
+        .window-body .nav-bar {
+            background: #242a2c;
+            padding: 6px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            flex-shrink: 0;
+        }
+        .window-body .nav-bar .path {
+            color: #bbbbbb;
+            font-size: 0.8rem;
+        }
+        .window-body .nav-bar .path span { color: #3584e4; }
+        .window-body .nav-bar .search-icon {
+            margin-left: auto;
+            color: #888;
+        }
+
+        .window-body .content-area {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        .window-body .sidebar {
+            width: 170px;
+            background: #242a2c;
+            padding: 10px 0;
+            border-right: 1px solid rgba(255,255,255,0.04);
+            flex-shrink: 0;
+            overflow-y: auto;
+        }
+        .window-body .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 16px;
+            color: #cccccc;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+            border-left: 3px solid transparent;
+        }
+        .window-body .sidebar-item:hover {
+            background: rgba(255,255,255,0.04);
+            color: #ffffff;
+        }
+        .window-body .sidebar-item.active {
+            background: rgba(53,132,228,0.15);
+            color: #3584e4;
+            border-left-color: #3584e4;
+        }
+        .window-body .sidebar-item .icon { font-size: 1.1rem; width: 24px; text-align: center; }
+
+        .window-body .main-content {
+            flex: 1;
+            padding: 20px 24px;
+            overflow-y: auto;
+            background: #2e3436;
+        }
+        .window-body .main-content h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #eeeeee;
+        }
+        .window-body .main-content p, .window-body .main-content li {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #dddddd;
+        }
+        .window-body .main-content ul {
+            list-style: none;
+            padding: 0;
+        }
+        .window-body .main-content ul li {
+            padding: 3px 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .window-body .main-content ul li::before {
+            content: "▹";
+            color: #3584e4;
+        }
+        .window-body .main-content .project-item {
+            background: #242a2c;
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid #3584e4;
+        }
+        .window-body .main-content .project-item h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #eeeeee;
+        }
+        .window-body .main-content .project-item p {
+            font-size: 0.85rem;
+            color: #bbbbbb;
+        }
+        .window-body .main-content .contact-info {
+            background: #242a2c;
+            border-radius: 6px;
+            padding: 12px 16px;
+            border-left: 4px solid #26a269;
+        }
+        .window-body .main-content .contact-info a {
+            color: #3584e4;
+            text-decoration: none;
+        }
+
+        /* Terminal específica */
+        .terminal-window .window-body {
+            background: #1a1a1a;
+        }
+        .terminal-output {
+            flex: 1;
+            padding: 12px 16px;
+            font-family: 'Inter', monospace;
+            font-size: 0.85rem;
+            color: #aaaaaa;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.5;
+        }
+        .terminal-output .prompt { color: #26a269; }
+        .terminal-output .cmd { color: #eeeeee; }
+        .terminal-input-row {
+            display: flex;
+            align-items: center;
+            padding: 6px 16px 12px 16px;
+            gap: 8px;
+            background: #1a1a1a;
+            border-top: 1px solid rgba(255,255,255,0.03);
+        }
+        .terminal-input-row span { color: #26a269; font-weight: 600; }
+        .terminal-input-row input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #eeeeee;
+            font-family: 'Inter', monospace;
+            font-size: 0.85rem;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .terminal-input-row input:focus { border-bottom-color: #3584e4; }
+
+        /* Scrollbar oscura */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: #1a1a1a; }
+        ::-webkit-scrollbar-thumb { background: #444; border-radius: 8px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        /* Responsive para ventanas */
+        @media (max-width: 700px) {
+            .window {
+                min-width: 280px;
+                min-height: 240px;
+                left: 5% !important;
+                top: 10% !important;
+                width: 90% !important;
+                height: 80% !important;
+            }
+            .window-body .sidebar {
+                width: 130px;
+            }
+            .window-body .sidebar-item {
+                font-size: 0.75rem;
+                padding: 4px 12px;
+            }
+            .window-body .main-content {
+                padding: 14px 16px;
+            }
+            .gnome-dash {
+                padding: 6px 12px;
+                gap: 8px;
+                bottom: 10px;
+            }
+            .dash-icon .icon { font-size: 1.2rem; }
+            .dash-icon .label { font-size: 0.5rem; }
+        }
+        @media (max-width: 480px) {
+            .top-left .activities-btn { font-size: 0.7rem; padding: 2px 10px; }
+            .top-center { font-size: 0.75rem; padding: 2px 10px; }
+            .top-right .icons { gap: 6px; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BARRA SUPERIOR GNOME -->
+    <header class="gnome-top-bar">
+        <div class="top-left">
+            <span class="activities-btn">
+                <span class="dot"></span> <span id="activitiesLabel">Activities</span>
+            </span>
+        </div>
+        <div class="top-center" id="clockDisplay">Cargando...</div>
+        <div class="top-right">
+            <div class="icons">
+                <span>📶</span><span>🔊</span><span>🔋</span><span>⚙️</span>
+            </div>
+            <!-- Botón para cambiar fondo de pantalla -->
+            <button class="wallpaper-btn" id="wallpaperBtn" title="Change wallpaper (right-click to reset)">🖼️</button>
+            <button class="lang-btn" id="langToggle">ES</button>
+        </div>
+    </header>
+
+    <!-- ESCRITORIO -->
+    <div class="desktop" id="desktop"></div>
+
+    <!-- DASH -->
+    <div class="gnome-dash" id="dash">
+        <div class="dash-icon active" data-window="portafolio">
+            <span class="icon">📁</span>
+            <span class="label" data-i18n="dash-portfolio">Portfolio</span>
+        </div>
+        <div class="dash-icon" data-window="terminal">
+            <span class="icon">🖥️</span>
+            <span class="label" data-i18n="dash-terminal">Terminal</span>
+        </div>
+        <div class="dash-icon" data-window="contacto">
+            <span class="icon">✉️</span>
+            <span class="label" data-i18n="dash-contact">Contact</span>
+        </div>
+    </div>
+
+    <!-- VENTANA PORTAFOLIO -->
+    <div id="window-portafolio" class="window" style="width: 780px; height: 560px; top: 70px; left: 60px;">
+        <div class="window-titlebar" data-window="portafolio">
+            <span class="window-title" data-i18n="window-portfolio-title">Portfolio of Rubén</span>
+            <div class="window-controls">
+                <button class="win-btn minimize" data-action="minimize" aria-label="Minimize"></button>
+                <button class="win-btn maximize" data-action="maximize" aria-label="Maximize"></button>
+                <button class="win-btn close" data-action="close" aria-label="Close"></button>
+            </div>
+        </div>
+        <div class="window-body">
+            <div class="nav-bar">
+                <span class="path">📁 <span>~/Portfolio</span></span>
+                <span class="search-icon">🔍</span>
+            </div>
+            <div class="content-area">
+                <div class="sidebar" id="sidebar-portafolio">
+                    <div class="sidebar-item active" data-section="inicio"><span class="icon">🏠</span> <span data-i18n="nav-home">Home</span></div>
+                    <div class="sidebar-item" data-section="sobremi"><span class="icon">👤</span> <span data-i18n="nav-about">About</span></div>
+                    <div class="sidebar-item" data-section="habilidades"><span class="icon">⚙️</span> <span data-i18n="nav-skills">Skills</span></div>
+                    <div class="sidebar-item" data-section="proyectos"><span class="icon">🧪</span> <span data-i18n="nav-projects">Projects</span></div>
+                    <div class="sidebar-item" data-section="contacto"><span class="icon">✉️</span> <span data-i18n="nav-contact">Contact</span></div>
+                </div>
+                <div class="main-content" id="mainContent-portafolio"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VENTANA TERMINAL -->
+    <div id="window-terminal" class="window terminal-window hidden" style="width: 520px; height: 340px; top: 130px; left: 280px; display: none;">
+        <div class="window-titlebar" data-window="terminal">
+            <span class="window-title" data-i18n="window-terminal-title">Terminal · Rubén</span>
+            <div class="window-controls">
+                <button class="win-btn minimize" data-action="minimize" aria-label="Minimize"></button>
+                <button class="win-btn maximize" data-action="maximize" aria-label="Maximize"></button>
+                <button class="win-btn close" data-action="close" aria-label="Close"></button>
+            </div>
+        </div>
+        <div class="window-body">
+            <div class="terminal-output" id="terminalOutput">
+                <span class="prompt">$</span> <span class="cmd" data-i18n="terminal-welcome">Welcome. Type 'help' for assistance.</span>
+            </div>
+            <div class="terminal-input-row">
+                <span>$</span>
+                <input type="text" id="terminalInput" placeholder="Command..." autofocus>
+            </div>
+        </div>
+    </div>
+
+    <!-- Input oculto para seleccionar imagen de fondo -->
+    <input type="file" id="wallpaperInput" accept="image/*" style="display:none;">
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ---------- CONTENIDO MULTI-IDIOMA ----------
+            const content = {
+                en: {
+                    'nav-home': 'Home',
+                    'nav-about': 'About',
+                    'nav-skills': 'Skills',
+                    'nav-projects': 'Projects',
+                    'nav-contact': 'Contact',
+                    'dash-portfolio': 'Portfolio',
+                    'dash-terminal': 'Terminal',
+                    'dash-contact': 'Contact',
+                    'window-portfolio-title': 'Portfolio of Rubén',
+                    'window-terminal-title': 'Terminal · Rubén',
+                    'activities': 'Activities',
+                    'terminal-welcome': 'Welcome. Type \'help\' for assistance.',
+                    'section-inicio': `
+                        <h2>👋 Hello, I'm Rubén Cobos</h2>
+                        <p style="font-size:1rem; margin-bottom:10px;">
+                            Cross-platform desktop application developer · .NET experience creator
+                        </p>
+                        <p>
+                            <strong>Everything I build is crafted with C# and Avalonia UI</strong> — from fluid interfaces to robust business logic.
+                            I consider myself a <strong>creative and resourceful</strong> person, always looking for elegant solutions and learning something new every day.
+                        </p>
+                        <p style="margin-top:12px;">
+                            Although I'm taking my first steps in the professional world, my focus is on creating applications that work perfectly on Windows, Linux, and macOS.
+                            I'm passionate about clean code, thoughtful design, and collaboration.
+                        </p>
+                        <p style="margin-top:14px; background:#242a2c; padding:10px 14px; border-radius:6px; border-left:4px solid #26a269;">
+                            📬 <strong>Want to contact me?</strong> I'm open to collaborating.
+                            Write me at <a href="mailto:cobosruben56@gmail.com" style="color:#3584e4; text-decoration:none;">cobosruben56@gmail.com</a>
+                        </p>
+                    `,
+                    'section-sobremi': `
+                        <h2>👤 About me</h2>
+                        <p>
+                            I'm Rubén Cobos, passionate about software development with a special focus on the .NET ecosystem.
+                            My daily work revolves around <strong>C# and Avalonia UI</strong>, building cross-platform desktop applications that are fast, attractive, and maintainable.
+                        </p>
+                        <p style="margin-top:10px;">
+                            I consider myself a <strong>creative</strong> person; I love experimenting with new architectures, design patterns, and tools that improve the development experience.
+                            I'm self-taught and enjoy sharing what I learn with the community.
+                        </p>
+                        <p style="margin-top:10px; background:#242a2c; padding:10px 14px; border-radius:6px; border-left:4px solid #e5a50a;">
+                            🎯 <strong>My philosophy:</strong> "Software should be a natural extension of human creativity."
+                        </p>
+                    `,
+                    'section-habilidades': `
+                        <h2>⚙️ Technical Skills</h2>
+                        <ul>
+                            <li><strong>C#</strong> · .NET 8 · LINQ · Async/Await</li>
+                            <li><strong>XAML</strong> · Avalonia UI · WPF (knowledge)</li>
+                            <li><strong>MVVM</strong> · Prism · ReactiveUI</li>
+                            <li><strong>Databases</strong> SQLite · PostgreSQL · EF Core</li>
+                            <li><strong>Git</strong> · GitHub · GitLab</li>
+                            <li><strong>Clean Architecture</strong> · DDD · CQRS (basic)</li>
+                            <li><strong>Testing</strong> xUnit · NUnit · Moq</li>
+                        </ul>
+                    `,
+                    'section-proyectos': `
+                        <h2>🧪 Conceptual Projects</h2>
+                        <div class="project-item">
+                            <h3>🖌️ AvaloniaCanvas Pro</h3>
+                            <p>Vector graphics editor with layers, drawing tools and SVG export.
+                            Built with <strong>C#, Avalonia UI and SkiaSharp</strong>.</p>
+                        </div>
+                        <div class="project-item">
+                            <h3>📊 DotNetMonitor</h3>
+                            <p>Control panel to monitor .NET applications in real time.
+                            Uses <strong>SignalR</strong> and <strong>Avalonia</strong>.</p>
+                        </div>
+                        <div class="project-item">
+                            <h3>⚡ CSharpPlayground</h3>
+                            <p>Lightweight IDE to run C# scripts on the fly with <strong>Roslyn</strong> and <strong>Avalonia</strong>.</p>
+                        </div>
+                    `,
+                    'section-contacto': `
+                        <h2>✉️ Contact</h2>
+                        <p>Do you have an interesting idea or need help with your next project?</p>
+                        <div class="contact-info">
+                            <p style="margin:0;">📧 <a href="mailto:cobosruben56@gmail.com">cobosruben56@gmail.com</a></p>
+                            <p style="margin:4px 0 0 0; font-size:0.8rem; color:#999;">
+                                📱 Available for inquiries and collaborations.
+                            </p>
+                        </div>
+                    `
+                },
+                es: {
+                    'nav-home': 'Inicio',
+                    'nav-about': 'Sobre mí',
+                    'nav-skills': 'Habilidades',
+                    'nav-projects': 'Proyectos',
+                    'nav-contact': 'Contacto',
+                    'dash-portfolio': 'Portafolio',
+                    'dash-terminal': 'Terminal',
+                    'dash-contact': 'Contacto',
+                    'window-portfolio-title': 'Portafolio de Rubén',
+                    'window-terminal-title': 'Terminal · Rubén',
+                    'activities': 'Actividades',
+                    'terminal-welcome': 'Bienvenido. Escribe \'help\' para ayuda.',
+                    'section-inicio': `
+                        <h2>👋 Hola, soy Rubén Cobos</h2>
+                        <p style="font-size:1rem; margin-bottom:10px;">
+                            Desarrollador de aplicaciones de escritorio multiplataforma · Creador de experiencias con .NET
+                        </p>
+                        <p>
+                            <strong>Todo lo que hago lo construyo con C# y Avalonia UI</strong> — desde interfaces fluidas hasta lógica de negocio robusta.
+                            Me considero una persona <strong>creativa y resolutiva</strong>, siempre buscando soluciones elegantes y aprender algo nuevo cada día.
+                        </p>
+                        <p style="margin-top:12px;">
+                            Aunque estoy dando mis primeros pasos en el mundo profesional, mi enfoque está en crear aplicaciones que funcionen perfectamente en Windows, Linux y macOS.
+                            Me apasiona el código limpio, el diseño bien pensado y la colaboración.
+                        </p>
+                        <p style="margin-top:14px; background:#242a2c; padding:10px 14px; border-radius:6px; border-left:4px solid #26a269;">
+                            📬 <strong>¿Quieres contactarme?</strong> Estoy abierto a colaborar.
+                            Escríbeme a <a href="mailto:cobosruben56@gmail.com" style="color:#3584e4; text-decoration:none;">cobosruben56@gmail.com</a>
+                        </p>
+                    `,
+                    'section-sobremi': `
+                        <h2>👤 Sobre mí</h2>
+                        <p>
+                            Soy Rubén Cobos, un apasionado del desarrollo de software con un enfoque especial en el ecosistema .NET.
+                            Mi día a día gira en torno a <strong>C# y Avalonia UI</strong>, construyendo aplicaciones de escritorio multiplataforma que sean rápidas, atractivas y fáciles de mantener.
+                        </p>
+                        <p style="margin-top:10px;">
+                            Me considero una persona <strong>creativa</strong>; me encanta experimentar con nuevas arquitecturas, patrones de diseño y herramientas que mejoren la experiencia de desarrollo. Soy autodidacta y disfruto compartir lo que aprendo con la comunidad.
+                        </p>
+                        <p style="margin-top:10px; background:#242a2c; padding:10px 14px; border-radius:6px; border-left:4px solid #e5a50a;">
+                            🎯 <strong>Mi filosofía:</strong> "El software debe ser una extensión natural de la creatividad humana."
+                        </p>
+                    `,
+                    'section-habilidades': `
+                        <h2>⚙️ Habilidades técnicas</h2>
+                        <ul>
+                            <li><strong>C#</strong> · .NET 8 · LINQ · Async/Await</li>
+                            <li><strong>XAML</strong> · Avalonia UI · WPF (conocimiento)</li>
+                            <li><strong>MVVM</strong> · Prism · ReactiveUI</li>
+                            <li><strong>Bases de datos</strong> SQLite · PostgreSQL · EF Core</li>
+                            <li><strong>Git</strong> · GitHub · GitLab</li>
+                            <li><strong>Clean Architecture</strong> · DDD · CQRS (básico)</li>
+                            <li><strong>Pruebas</strong> xUnit · NUnit · Moq</li>
+                        </ul>
+                    `,
+                    'section-proyectos': `
+                        <h2>🧪 Proyectos conceptuales</h2>
+                        <div class="project-item">
+                            <h3>🖌️ AvaloniaCanvas Pro</h3>
+                            <p>Editor gráfico vectorial con capas, herramientas de dibujo y exportación a SVG.
+                            Construido con <strong>C#, Avalonia UI y SkiaSharp</strong>.</p>
+                        </div>
+                        <div class="project-item">
+                            <h3>📊 DotNetMonitor</h3>
+                            <p>Panel de control para monitorizar aplicaciones .NET en tiempo real.
+                            Usa <strong>SignalR</strong> y <strong>Avalonia</strong>.</p>
+                        </div>
+                        <div class="project-item">
+                            <h3>⚡ CSharpPlayground</h3>
+                            <p>IDE ligero para ejecutar scripts de C# sobre la marcha con <strong>Roslyn</strong> y <strong>Avalonia</strong>.</p>
+                        </div>
+                    `,
+                    'section-contacto': `
+                        <h2>✉️ Contacto</h2>
+                        <p>¿Tienes una idea interesante o necesitas ayuda con tu próximo proyecto?</p>
+                        <div class="contact-info">
+                            <p style="margin:0;">📧 <a href="mailto:cobosruben56@gmail.com">cobosruben56@gmail.com</a></p>
+                            <p style="margin:4px 0 0 0; font-size:0.8rem; color:#999;">
+                                📱 Disponible para consultas y colaboraciones.
+                            </p>
+                        </div>
+                    `
+                }
+            };
+
+            // ---------- ESTADO ----------
+            let currentLang = 'en';
+            let currentSection = 'inicio';
+
+            // ---------- REFERENCIAS ----------
+            const portafolioWindow = document.getElementById('window-portafolio');
+            const terminalWindow = document.getElementById('window-terminal');
+            const sidebarItems = document.querySelectorAll('#sidebar-portafolio .sidebar-item');
+            const mainContent = document.getElementById('mainContent-portafolio');
+            const terminalOutput = document.getElementById('terminalOutput');
+            const terminalInput = document.getElementById('terminalInput');
+            const dashIcons = document.querySelectorAll('.dash-icon');
+            const langToggle = document.getElementById('langToggle');
+            const activitiesLabel = document.getElementById('activitiesLabel');
+            const wallpaperBtn = document.getElementById('wallpaperBtn');
+            const wallpaperInput = document.getElementById('wallpaperInput');
+            const body = document.body;
+
+            // ---------- FUNCIÓN PARA ACTUALIZAR EL IDIOMA ----------
+            function updateLanguage(lang) {
+                currentLang = lang;
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (content[lang] && content[lang][key] !== undefined) {
+                        if (el.tagName === 'SPAN' || el.tagName === 'BUTTON') {
+                            el.textContent = content[lang][key];
+                        } else {
+                            el.textContent = content[lang][key];
+                        }
+                    }
+                });
+                langToggle.textContent = lang === 'en' ? 'ES' : 'EN';
+                activitiesLabel.textContent = content[lang]['activities'] || 'Activities';
+                renderSection(currentSection);
+                const welcomeMsg = document.querySelector('#terminalOutput .cmd');
+                if (welcomeMsg) {
+                    welcomeMsg.textContent = content[lang]['terminal-welcome'] || 'Welcome. Type \'help\' for assistance.';
+                }
+                document.querySelector('.window-title[data-window="portafolio"]').textContent = content[lang]['window-portfolio-title'] || 'Portfolio of Rubén';
+                document.querySelector('.window-title[data-window="terminal"]').textContent = content[lang]['window-terminal-title'] || 'Terminal · Rubén';
+            }
+
+            // ---------- RENDERIZAR SECCIÓN ----------
+            function renderSection(sectionId) {
+                currentSection = sectionId;
+                const key = 'section-' + sectionId;
+                const html = content[currentLang][key] || content['en'][key] || '<p>Content not available</p>';
+                mainContent.innerHTML = html;
+                sidebarItems.forEach(item => {
+                    item.classList.remove('active');
+                    if (item.dataset.section === sectionId) item.classList.add('active');
+                });
+            }
+
+            // ---------- NAVEGACIÓN ----------
+            sidebarItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const section = this.dataset.section;
+                    if (section) renderSection(section);
+                });
+            });
+
+            // ---------- RELOJ ----------
+            function updateClock() {
+                const now = new Date();
+                const opts = { weekday:'short', day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false };
+                document.getElementById('clockDisplay').textContent = new Intl.DateTimeFormat(currentLang === 'en' ? 'en-US' : 'es-ES', opts).format(now);
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+
+            // ---------- MANEJO DE VENTANAS ----------
+            const windows = document.querySelectorAll('.window');
+
+            dashIcons.forEach(icon => {
+                icon.addEventListener('click', function(e) {
+                    const winId = this.dataset.window;
+                    const win = document.getElementById('window-' + winId);
+                    if (win) {
+                        if (win.classList.contains('hidden')) {
+                            win.classList.remove('hidden');
+                            win.style.display = 'flex';
+                            bringToFront(win);
+                        } else {
+                            bringToFront(win);
+                        }
+                    }
+                    dashIcons.forEach(d => d.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            document.querySelectorAll('.win-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const action = this.dataset.action;
+                    const titlebar = this.closest('.window-titlebar');
+                    const win = titlebar ? titlebar.closest('.window') : null;
+                    if (!win) return;
+
+                    if (action === 'close' || action === 'minimize') {
+                        win.classList.add('hidden');
+                        win.style.display = 'none';
+                        const winId = win.id.replace('window-', '');
+                        dashIcons.forEach(d => {
+                            if (d.dataset.window === winId) d.classList.remove('active');
+                        });
+                    } else if (action === 'maximize') {
+                        win.classList.toggle('maximized');
+                    }
+                });
+            });
+
+            // Arrastre de ventanas
+            let dragTarget = null, dragOffsetX = 0, dragOffsetY = 0;
+
+            document.querySelectorAll('.window-titlebar').forEach(titlebar => {
+                titlebar.addEventListener('mousedown', function(e) {
+                    if (e.target.closest('.win-btn')) return;
+                    const win = this.closest('.window');
+                    if (!win || win.classList.contains('maximized')) return;
+                    dragTarget = win;
+                    const rect = win.getBoundingClientRect();
+                    dragOffsetX = e.clientX - rect.left;
+                    dragOffsetY = e.clientY - rect.top;
+                    win.style.cursor = 'grabbing';
+                    e.preventDefault();
+                });
+            });
+
+            document.addEventListener('mousemove', function(e) {
+                if (!dragTarget) return;
+                let left = e.clientX - dragOffsetX;
+                let top = e.clientY - dragOffsetY;
+                left = Math.max(0, Math.min(left, window.innerWidth - dragTarget.offsetWidth));
+                top = Math.max(44, Math.min(top, window.innerHeight - dragTarget.offsetHeight - 20));
+                dragTarget.style.left = left + 'px';
+                dragTarget.style.top = top + 'px';
+                dragTarget.style.right = 'auto';
+                dragTarget.style.bottom = 'auto';
+            });
+
+            document.addEventListener('mouseup', function() {
+                if (dragTarget) {
+                    dragTarget.style.cursor = '';
+                    dragTarget = null;
+                }
+            });
+
+            function bringToFront(win) {
+                const maxZ = Math.max(...Array.from(document.querySelectorAll('.window:not(.hidden)')).map(w => parseInt(w.style.zIndex) || 100));
+                win.style.zIndex = maxZ + 1;
+            }
+            document.querySelectorAll('.window').forEach(win => {
+                win.addEventListener('mousedown', function() { bringToFront(this); });
+            });
+
+            document.getElementById('desktop').addEventListener('dblclick', function(e) {
+                if (e.target.closest('.dash-icon')) return;
+                const term = document.getElementById('window-terminal');
+                if (term.classList.contains('hidden')) {
+                    term.classList.remove('hidden');
+                    term.style.display = 'flex';
+                    bringToFront(term);
+                    terminalInput.focus();
+                    dashIcons.forEach(d => {
+                        d.classList.remove('active');
+                        if (d.dataset.window === 'terminal') d.classList.add('active');
+                    });
+                } else {
+                    bringToFront(term);
+                }
+            });
+
+            // ---------- TERMINAL SIMULADA ----------
+            function terminalPrint(text, isCommand = false) {
+                const line = document.createElement('div');
+                if (isCommand) {
+                    line.innerHTML = `<span class="prompt">$</span> <span class="cmd">${text}</span>`;
+                } else {
+                    line.textContent = text;
+                    line.style.color = '#aaaaaa';
+                }
+                terminalOutput.appendChild(line);
+                terminalOutput.scrollTop = terminalOutput.scrollHeight;
+                while (terminalOutput.children.length > 20) {
+                    terminalOutput.removeChild(terminalOutput.firstChild);
+                }
+            }
+
+            function processCommand(cmd) {
+                const trimmed = cmd.trim().toLowerCase();
+                if (!trimmed) return;
+                terminalPrint(trimmed, true);
+
+                const msgs = {
+                    en: {
+                        help: '📖 Commands: help, contact, clear, about, portfolio',
+                        help_list: '   - help     : this help',
+                        contact: '📧 cobosruben56@gmail.com',
+                        about: 'Rubén Cobos · .NET Developer · Avalonia UI · Creative & resourceful',
+                        unknown: '❌ Unknown command: "{{cmd}}". Type "help".'
+                    },
+                    es: {
+                        help: '📖 Comandos: help, contact, clear, about, portfolio',
+                        help_list: '   - help     : esta ayuda',
+                        contact: '📧 cobosruben56@gmail.com',
+                        about: 'Rubén Cobos · Desarrollador .NET · Avalonia UI · Creativo y resolutivo',
+                        unknown: '❌ Comando no reconocido: "{{cmd}}". Escribe "help".'
+                    }
+                };
+
+                const langMsgs = msgs[currentLang] || msgs.en;
+
+                switch (trimmed) {
+                    case 'help':
+                        terminalPrint(langMsgs.help);
+                        terminalPrint(langMsgs.help_list);
+                        break;
+                    case 'contact':
+                        terminalPrint(langMsgs.contact);
+                        break;
+                    case 'clear':
+                        terminalOutput.innerHTML = '';
+                        break;
+                    case 'about':
+                        terminalPrint(langMsgs.about);
+                        break;
+                    case 'portfolio':
+                        terminalPrint('Opening portfolio...');
+                        const pWin = document.getElementById('window-portafolio');
+                        if (pWin.classList.contains('hidden')) {
+                            pWin.classList.remove('hidden');
+                            pWin.style.display = 'flex';
+                            bringToFront(pWin);
+                            dashIcons.forEach(d => {
+                                d.classList.remove('active');
+                                if (d.dataset.window === 'portafolio') d.classList.add('active');
+                            });
+                        } else {
+                            bringToFront(pWin);
+                        }
+                        break;
+                    default:
+                        terminalPrint(langMsgs.unknown.replace('{{cmd}}', trimmed));
+                }
+            }
+
+            terminalInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    const cmd = this.value;
+                    processCommand(cmd);
+                    this.value = '';
+                }
+            });
+
+            terminalWindow.addEventListener('mousedown', function() {
+                setTimeout(() => terminalInput.focus(), 50);
+            });
+
+            // ---------- CAMBIO DE IDIOMA ----------
+            langToggle.addEventListener('click', function() {
+                const newLang = currentLang === 'en' ? 'es' : 'en';
+                updateLanguage(newLang);
+            });
+
+            // ---------- CAMBIO DE FONDO DE PANTALLA ----------
+            // Cargar fondo guardado en localStorage
+            function loadWallpaper() {
+                const saved = localStorage.getItem('wallpaper');
+                if (saved) {
+                    try {
+                        const data = JSON.parse(saved);
+                        if (data.url) {
+                            setWallpaper(data.url, data.isDataUrl);
+                        }
+                    } catch (e) {
+                        // ignore
+                    }
+                }
+            }
+
+            function setWallpaper(url, isDataUrl = false) {
+                if (isDataUrl) {
+                    body.style.setProperty('--wallpaper', `url(${url})`);
+                } else {
+                    body.style.setProperty('--wallpaper', `url(${url})`);
+                }
+                body.classList.add('wallpaper-set');
+                // Guardar en localStorage
+                localStorage.setItem('wallpaper', JSON.stringify({ url: url, isDataUrl: isDataUrl }));
+            }
+
+            function resetWallpaper() {
+                body.classList.remove('wallpaper-set');
+                body.style.setProperty('--wallpaper', 'none');
+                localStorage.removeItem('wallpaper');
+            }
+
+            wallpaperBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                wallpaperInput.click();
+            });
+
+            wallpaperBtn.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                resetWallpaper();
+                // Mostrar mensaje en terminal (opcional)
+                terminalPrint('🖼️ Wallpaper reset to default.');
+            });
+
+            wallpaperInput.addEventListener('change', function(e) {
+                const file = this.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const dataUrl = event.target.result;
+                    setWallpaper(dataUrl, true);
+                };
+                reader.readAsDataURL(file);
+                this.value = ''; // permitir seleccionar el mismo archivo de nuevo
+            });
+
+            // Cargar wallpaper al iniciar
+            loadWallpaper();
+
+            // ---------- INICIALIZAR ----------
+            portafolioWindow.classList.remove('hidden');
+            portafolioWindow.style.display = 'flex';
+            terminalWindow.classList.add('hidden');
+            terminalWindow.style.display = 'none';
+            portafolioWindow.style.zIndex = 200;
+            terminalWindow.style.zIndex = 100;
+
+            updateLanguage('en');
+            renderSection('inicio');
+
+            setTimeout(() => {
+                terminalPrint('💡 Type "help" to see available commands.');
+            }, 500);
+
+            dashIcons.forEach(d => {
+                d.classList.remove('active');
+                if (d.dataset.window === 'portafolio') d.classList.add('active');
+            });
+
+        })();
+    </script>
+
+</body>
+</html>
