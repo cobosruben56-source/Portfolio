@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GNOME Desktop · Rubén Cobos</title>
+    
+    <title>Rubén Cobos · Desarrollador .NET &amp; Avalonia UI</title>
+    <meta name="description" content="Portfolio de Rubén Cobos, desarrollador de aplicaciones de escritorio multiplataforma con C# y Avalonia UI. Proyectos, habilidades y contacto.">
+    <link rel="canonical" href="https://ruben-cobos.netlify.app/">
+    <meta name="robots" content="index, follow">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
@@ -380,6 +385,12 @@
             background: #2e3436;
             touch-action: pan-y;
         }
+        .window-body .main-content h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #eeeeee;
+        }
         .window-body .main-content h2 {
             font-size: 1.4rem;
             font-weight: 600;
@@ -725,7 +736,24 @@
                     <div class="sidebar-item" data-section="proyectos"><span class="icon">🧪</span> <span data-i18n="nav-projects">Projects</span></div>
                     <div class="sidebar-item" data-section="contacto"><span class="icon">✉️</span> <span data-i18n="nav-contact">Contact</span></div>
                 </div>
-                <div class="main-content" id="mainContent-portafolio"></div>
+=                <div class="main-content" id="mainContent-portafolio">
+                    <h1>👋 Hello, I'm Rubén Cobos</h1>
+                    <p style="font-size:1rem; margin-bottom:10px;">
+                        Cross-platform desktop application developer · .NET experience creator
+                    </p>
+                    <p>
+                        <strong>Everything I build is crafted with C# and Avalonia UI</strong> — from fluid interfaces to robust business logic.
+                        I consider myself a <strong>creative and resourceful</strong> person, always looking for elegant solutions and learning something new every day.
+                    </p>
+                    <p style="margin-top:12px;">
+                        Although I'm taking my first steps in the professional world, my focus is on creating applications that work perfectly on Windows, Linux, and macOS.
+                        I'm passionate about clean code, thoughtful design, and collaboration.
+                    </p>
+                    <p style="margin-top:14px; background:#242a2c; padding:10px 14px; border-radius:6px; border-left:4px solid #26a269;">
+                        📬 <strong>Want to contact me?</strong> I'm open to collaborating.
+                        Write me at <a href="mailto:cobosruben56@gmail.com" style="color:#3584e4; text-decoration:none;">cobosruben56@gmail.com</a>
+                    </p>
+                </div>
             </div>
         </div>
     </div>
@@ -750,11 +778,26 @@
         </div>
     </div>
 
+    <noscript>
+        <div style="position:fixed; top:44px; left:0; right:0; bottom:0; background:#1a1a1a; color:#eee; padding:40px; overflow-y:auto; z-index:9999;">
+            <h1>👋 Hello, I'm Rubén Cobos</h1>
+            <p style="font-size:1.2rem;">Cross-platform desktop application developer · .NET experience creator</p>
+            <p><strong>Everything I build is crafted with C# and Avalonia UI</strong> — from fluid interfaces to robust business logic.</p>
+            <p>I consider myself a <strong>creative and resourceful</strong> person, always looking for elegant solutions and learning something new every day.</p>
+            <p>Although I'm taking my first steps in the professional world, my focus is on creating applications that work perfectly on Windows, Linux, and macOS. I'm passionate about clean code, thoughtful design, and collaboration.</p>
+            <p style="background:#242a2c; padding:10px 14px; border-left:4px solid #26a269;">📬 <strong>Want to contact me?</strong> Write me at <a href="mailto:cobosruben56@gmail.com" style="color:#3584e4;">cobosruben56@gmail.com</a></p>
+            <hr style="border-color:#444; margin:20px 0;">
+            <p><a href="#window-portafolio" style="color:#3584e4;">Ver portfolio completo (JavaScript necesario para la interfaz interactiva)</a></p>
+        </div>
+    </noscript>
+
     <input type="file" id="wallpaperInput" accept="image/*" style="display:none;">
 
     <script>
         (function() {
             'use strict';
+
+  
 
             const content = {
                 en: {
@@ -771,7 +814,7 @@
                     'activities': 'Activities',
                     'terminal-welcome': 'Welcome. Type \'help\' for assistance.',
                     'section-inicio': `
-                        <h2>👋 Hello, I'm Rubén Cobos</h2>
+                        <h1>👋 Hello, I'm Rubén Cobos</h1>
                         <p style="font-size:1rem; margin-bottom:10px;">
                             Cross-platform desktop application developer · .NET experience creator
                         </p>
@@ -856,7 +899,7 @@
                     'activities': 'Actividades',
                     'terminal-welcome': 'Bienvenido. Escribe \'help\' para ayuda.',
                     'section-inicio': `
-                        <h2>👋 Hola, soy Rubén Cobos</h2>
+                        <h1>👋 Hola, soy Rubén Cobos</h1>
                         <p style="font-size:1rem; margin-bottom:10px;">
                             Desarrollador de aplicaciones de escritorio multiplataforma · Creador de experiencias con .NET
                         </p>
@@ -1327,7 +1370,10 @@
             terminalWindow.style.zIndex = 100;
 
             updateLanguage('en');
-            renderSection('inicio');
+            sidebarItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.section === 'inicio') item.classList.add('active');
+            });
 
             setTimeout(() => {
                 terminalPrint('💡 Type "help" to see available commands.');
